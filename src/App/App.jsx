@@ -8,6 +8,7 @@ import { PrivateRoute } from '../_components';
 import { HomePage } from '../HomePage';
 import { LoginPage } from '../LoginPage';
 import { RegisterPage } from '../RegisterPage';
+import { CouponPage } from '../CouponPage';
 
 function App() {
     const alert = useSelector(state => state.alert);
@@ -23,7 +24,7 @@ function App() {
     return (
         <div className="jumbotron">
             <div className="container">
-                <div className="col-md-8 offset-md-2">
+                <div className="col-xs-6">
                     {alert.message &&
                         <div className={`alert ${alert.type}`}>{alert.message}</div>
                     }
@@ -32,6 +33,7 @@ function App() {
                             <PrivateRoute exact path="/" component={HomePage} />
                             <Route path="/login" component={LoginPage} />
                             <Route path="/register" component={RegisterPage} />
+                            <Route path="/coupons" component={CouponPage} />
                             <Redirect from="*" to="/" />
                         </Switch>
                     </Router>

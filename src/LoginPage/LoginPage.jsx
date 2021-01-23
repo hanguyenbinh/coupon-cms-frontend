@@ -16,9 +16,9 @@ function LoginPage() {
     const location = useLocation();
 
     // reset login status
-    useEffect(() => { 
-        dispatch(userActions.logout()); 
-    }, []);
+    // useEffect(() => { 
+    //     dispatch(userActions.logout()); 
+    // }, []);
 
     function handleChange(e) {
         const { name, value } = e.target;
