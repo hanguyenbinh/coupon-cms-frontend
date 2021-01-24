@@ -7,7 +7,8 @@ export const couponActions = {
     initCoupon,
     getCoupons,
     getCouponGroups,
-    updateCouponExpiredDate
+    updateCouponExpiredDate,
+    getCouponsInGroup
 };
 
 function initCoupon(total, expiredDate){
@@ -18,7 +19,7 @@ function initCoupon(total, expiredDate){
             .then(
                 () => { 
                     dispatch(success());
-                    // history.push(from);
+                    history.push('/coupons');
                 },
                 error => {
                     dispatch(failure(error.toString()));
@@ -55,11 +56,11 @@ function getCoupons(page = 1, type='all'){
 }
 
 
-function getCouponGroups(page = 1, type='all'){
+function getCouponGroups(page = 1){
     return dispatch => {
         dispatch(request());
 
-        couponService.getCouponGroups(page, type)
+        couponService.getCouponGroups(page)
             .then(
                 (couponGroups) => { 
                     dispatch(success(couponGroups));
@@ -98,3 +99,23 @@ function updateCouponExpiredDate(groupId, expiredDate){
     function failure(error) { return { type: couponConstants.UPDATE_COUPON_EXPIRED_DATE_FAILURE, error } }
 }
 
+function getCouponsInGroup(groupId, page = 1, type='all'){
+    return dispatch => {
+        dispatch(request());
+
+        couponService.getCouponsInGroup(groupId, page, type)
+            .then(
+                (coupons) => { 
+                    dispatch(success(coupons));
+                },
+                error => {
+                    dispatch(failure(error.toString()));
+                    dispatch(alertActions.error(error.toString()));
+                }
+            );
+    };
+
+    function request() { return { type: couponConstants.GET_COUPONS_IN_GROUP_REQUEST } }
+    function success(coupons) { return { type: couponConstants.GET_COUPONS_IN_GROUP_SUCCESS, coupons } }
+    function failure(error) { return { type: couponConstants.GET_COUPONS_IN_GROUP_FAILURE, error } }
+}

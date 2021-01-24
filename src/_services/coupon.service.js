@@ -1,11 +1,15 @@
 import config from 'config';
-import { authHeader, history } from '../_helpers';
+import { authHeader } from '../_helpers';
+
+import { common } from './common';
+const handleResponse = common.handleResponse;
 
 export const couponService = {
     initCoupon,
     getCoupons,
     getCouponGroups,
-    updateCouponExpiredDate
+    updateCouponExpiredDate,
+    getCouponsInGroup
 };
 function initCoupon(total, expiredDate) {
     const formData = new FormData();
@@ -40,101 +44,14 @@ function getCoupons(page = 1, type = 'all') {
         });
 }
 
-function getOneCoupon(id) {
-    const requestOptions = {
-        method: 'GET',
-        headers: authHeader()
-    };
-
-    return fetch(`${config.apiUrl}/coupons/${id}`, requestOptions)
-        .then(handleResponse)
-        .then(result => {
-            if (result && result.success) {
-                return result.data;
-            }
-            return null;
-        });
-}
-
-
-function logout() {
-    // remove coupon from local storage to log coupon out
-    const requestOptions = {
-        method: 'POST',
-        headers: authHeader(),
-    };
-    fetch(`${config.apiUrl}/auth/logout`, requestOptions)
-        .then(coupon => {
-            console.log('logout');
-        });
-    localStorage.removeItem('coupon');
-}
-
-function getAll() {
-    const requestOptions = {
-        method: 'GET',
-        headers: authHeader()
-    };
-
-    // return fetch(`${config.apiUrl}/auth`, requestOptions).then(handleResponse);
-    return [];
-}
-
-function getById(id) {
-    const requestOptions = {
-        method: 'GET',
-        headers: authHeader()
-    };
-
-    return fetch(`${config.apiUrl}/auth/coupon`, requestOptions).then(handleResponse);
-}
-
-function register(coupon) {
-    console.log('coupon.register', coupon)
-    const formData = new FormData();
-    formData.append('email', coupon.couponname);
-    formData.append('password', coupon.password);
-    formData.append('password_confirmation', coupon.password_confirmation);
-    formData.append('name', coupon.name);
-    const requestOptions = {
-        method: 'POST',
-        body: formData
-    };
-
-    return fetch(`${config.apiUrl}/auth/register`, requestOptions).then(handleResponse);
-}
-
-function update(coupon) {
-    const requestOptions = {
-        method: 'PUT',
-        headers: { ...authHeader(), 'Content-Type': 'application/json' },
-        body: JSON.stringify(coupon)
-    };
-
-    // return fetch(`${config.apiUrl}/auth/${coupon.id}`, requestOptions).then(handleResponse);;
-    return null;
-}
-
-// prefixed function name with underscore because delete is a reserved word in javascript
-function _delete(id) {
-    const requestOptions = {
-        method: 'DELETE',
-        headers: authHeader()
-    };
-
-    // return fetch(`${config.apiUrl}/auth/${id}`, requestOptions).then(handleResponse);
-    return null;
-}
-
-
-function getCouponGroups(page = 1, type = 'all') {
+function getCouponGroups(page = 1) {
 
     const requestOptions = {
         method: 'GET',
         headers: authHeader()
     };
 
-    return fetch(`${config.apiUrl}/groups?page=${page}&type=${type}`, requestOptions)
+    return fetch(`${config.apiUrl}/groups?page=${page}`, requestOptions)
         .then(handleResponse)
         .then(result => {
             if (result && result.success) {
@@ -165,21 +82,19 @@ function updateCouponExpiredDate(groupId, expiredDate) {
         });
 }
 
+function getCouponsInGroup(groupId, page = 1, type = 'all') {
 
-function handleResponse(response) {
-    return response.text().then(text => {
-        const data = text && JSON.parse(text);
-        if (!response.ok) {
-            if (response.status === 401) {
-                logout();
-                // location.reload(true);
-                history.push('/login')
+    const requestOptions = {
+        method: 'GET',
+        headers: authHeader()
+    };
+
+    return fetch(`${config.apiUrl}/groups/${groupId}/coupons?page=${page}&type=${type}`, requestOptions)
+        .then(handleResponse)
+        .then(result => {
+            if (result && result.success) {
+                return result.data;
             }
-
-            const error = (data && data.message) || response.statusText;
-            return Promise.reject(error);
-        }
-
-        return data;
-    });
+            return [];
+        });
 }

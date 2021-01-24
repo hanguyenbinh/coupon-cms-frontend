@@ -36,7 +36,7 @@ function RegisterPage() {
     }
 
     return (
-        <div className="col-lg-8 offset-lg-2">
+        <div className="col-xs-6">
             <h2>Register</h2>
             <form name="form" onSubmit={handleSubmit}>
                 <div className="form-group">

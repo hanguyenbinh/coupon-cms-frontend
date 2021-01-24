@@ -12,11 +12,14 @@ function HomePage() {
     }    
 
     return (
-        <div className="col-lg-8 offset-lg-2">
+        <div className="col-xs-6">
             <h1>Hi {user.name}!</h1>
             <p>Welcome to Coupon CMS</p>
             <p>
                 <Link to='/coupons'>manage coupon</Link>
+            </p>
+            <p>
+                <Link to='/groups'>manage group of coupon</Link>
             </p>
             <p>
                 <button onClick={handleLogout}>logout</button>
