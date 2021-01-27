@@ -195,7 +195,7 @@ function GiftPage() {
           {gifts.items &&
             gifts.items.map((gift, index) => (
               <tr key={gift.id}>
-                <td onClick={() => handleSelectGift(gift)}>{index + 1}</td>
+                <td onClick={() => handleSelectGift(gift)}>{(page-1)*20 + index + 1}</td>
                 <td onClick={() => handleSelectGift(gift)}>
                   {gift.name ? gift.name : gift.defaultName}
                 </td>

@@ -8,6 +8,13 @@ import { Modal } from 'react-bootstrap';
 function CouponGroupPage() {
     const [page, setPage] = useState(1);
 
+    const [inputs, setInputs] = useState({
+        groupId: '',
+        extDate: ''
+    });
+    const { groupId, extDate } = inputs;
+    const [submitted, setSubmitted] = useState(false);
+
     const [selectedGroup, setSelectedGroup] = useState();
     const [show, setShow] = useState(false);
 
@@ -26,10 +33,25 @@ function CouponGroupPage() {
     const handleSelectGroup = (groupId) => {
         setSelectedGroup(groupId);
         dispatch(couponActions.getCouponsInGroup(groupId));
+        setInputs(inputs => ({ ...inputs, ['groupId']: groupId }));
         setShow(true);
     }
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
+    function handleInputsChange(e) {
+        const { name, value } = e.target;
+        setInputs(inputs => ({ ...inputs, [name]: value }));
+    }
+    function handleSubmit(e) {
+        e.preventDefault();
+
+        setSubmitted(true);
+        if (groupId && extDate) {
+            dispatch(couponActions.updateCouponExpiredDate(groupId, extDate));
+            dispatch(couponActions.getCouponsInGroup(groupId));
+        }
+
+    }
     return (
         <div className="col-xs-6">
             <h1>Coupon group manager</h1>
@@ -74,6 +96,28 @@ function CouponGroupPage() {
                     <Modal.Title>Coupons on group with id={selectedGroup}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    <div>
+                        Extend more days for coupons
+                    <form name="form" onSubmit={handleSubmit}>
+                            <div className="form-group">
+                                <label>Coupon groups</label>
+                                <input readOnly type="text" name="groupId" value={groupId} className={'form-control'}></input>
+                            </div>
+                            <div className="form-group">
+                                <label>Extend date</label>
+                                <input type="text" name="extDate" value={extDate} onChange={handleInputsChange} className={'form-control' + (submitted && !extDate ? ' is-invalid' : '')} />
+                                {submitted && !extDate &&
+                                    <div className="invalid-feedback">Extend date is required</div>
+                                }
+                            </div>
+                            <div className="form-group">
+                                <button className="btn btn-primary">
+                                    Update
+                    </button>
+                                {submitted && <div className="invalid-feedback">Wrong datetime format or current date not less than extend date</div>}
+                            </div>
+                        </form>
+                    </div>
                     <table className="table">
                         <thead>
                             <tr>
@@ -85,12 +129,12 @@ function CouponGroupPage() {
                         </thead>
                         <tbody>
                             {couponGroups.coupons && couponGroups.coupons.map((coupon, index) =>
-                                   <tr key={coupon.id}>
-                                   <td>{index + 1}</td>
-                                   <td>{coupon.code}</td>
-                                   <td>{coupon.expiredDate}</td>
-                                   <td>{coupon.redeemId ? 'redeemed':'available'}</td>
-                               </tr>                 
+                                <tr key={coupon.id}>
+                                    <td>{(page - 1) * 20 + index + 1}</td>
+                                    <td>{coupon.code}</td>
+                                    <td>{coupon.expiredDate}</td>
+                                    <td>{coupon.redeemId ? 'redeemed' : 'available'}</td>
+                                </tr>
                             )}
                         </tbody>
                     </table>

@@ -8,7 +8,7 @@
     "license": "MIT",
     "scripts": {
         "build": "webpack --mode production",
-        "start": "webpack-dev-server --open"
+        "start": "webpack-dev-server --open --host 0.0.0.0 --port 8080"
     },
     "dependencies": {
         "bootstrap": "^4.6.0",

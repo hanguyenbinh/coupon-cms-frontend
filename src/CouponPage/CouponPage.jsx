@@ -159,7 +159,7 @@ function CouponPage() {
                     {coupons.items &&
                         coupons.items.map((coupon, index) =>
                             <tr key={coupon.id}>
-                                <td>{index + 1}</td>
+                                <td>{(page-1)*20 + index + 1}</td>
                                 <td>{coupon.code}</td>
                                 <td>{coupon.expiredDate}</td>
                             </tr>
